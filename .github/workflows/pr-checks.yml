@@ -36,7 +36,7 @@ jobs:
         run: pnpm lint
 
   test:
-    name: Test
+    name: Build and Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -53,14 +53,37 @@ jobs:
         run: pnpm test
       - name: Run build
         run: pnpm build
-      - name: Link build artifacts to Pull Request
-        uses: gavv/pull-request-artifacts@93f32f061d1fabdb41104db2493f2260c7db774f
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        id: upload-artifacts
         with:
-          commit: ${{ github.event.pull_request.head.sha }}
-          comment-message: Generated artifacts for this PR
-          comment-style: table
-          artifacts: |
-            build
+          name: build
+          path: build/
+      - name: Find PR number
+        id: find-pull-request
+        uses: jwalton/gh-find-current-pr@v1
+        with:
+          state: open
+      - name: Find Comment
+        uses: peter-evans/find-comment@v2
+        id: find-comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: "github-actions[bot]"
+          body-inclues: "Build Successful! PR Build Artifacts available below"
+      - name: Update Comment
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          issue-number: ${{ steps.find-pull-request.outputs.number }}
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          edit-mode: replace
+          body: |-
+            Build Succesful! PR Build Artifacts available below
+
+            | Name     | Link                    |
+            | -------- | ----------------------- |
+            | Commit   | ${{ github.event.pull_request.head.sha }}     |
+            | Static Website | ${{ steps.upload-artifacts.outputs.artifact-url }}/index.html |
 
   dependency-review:
     name: Check for security/license issues
