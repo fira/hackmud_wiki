@@ -72,18 +72,18 @@ jobs:
           comment-author: 'github-actions[bot]'
           body-inclues: 'Build Successful! PR Build Artifacts available below'
       - name: Update Comment
-      uses: peter-evans/create-or-update-comment@v3
-      with:
-        issue-number: ${{ steps.find-pull-request.outputs.number }}
-        comment-id: ${{ steps.find-comment.outputs.comment-id }}
-        edit-mode: replace
-        body |-
-          Build Succesful! PR Build Artifacts available below
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          issue-number: ${{ steps.find-pull-request.outputs.number }}
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          edit-mode: replace
+          body |-
+            Build Succesful! PR Build Artifacts available below
 
-          | Name     | Link                    |
-          | -------- | ----------------------- |
-          | Commit   | ${{ github.event.pull_request.head.sha }}     |
-          | Static Website | ${{ steps.upload-artifacts.outputs.artifact-url }}/index.html |          
+            | Name     | Link                    |
+            | -------- | ----------------------- |
+            | Commit   | ${{ github.event.pull_request.head.sha }}     |
+            | Static Website | ${{ steps.upload-artifacts.outputs.artifact-url }}/index.html |          
           
   dependency-review:
     name: Check for security/license issues
