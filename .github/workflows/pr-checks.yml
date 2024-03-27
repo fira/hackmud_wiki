@@ -57,6 +57,7 @@ jobs:
         uses: gavv/pull-request-artifacts@93f32f061d1fabdb41104db2493f2260c7db774f
         with:
           commit: ${{ github.event.pull_request.head.sha }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           comment-message: Generated artifacts for this PR
           comment-style: table
           artifacts: |
